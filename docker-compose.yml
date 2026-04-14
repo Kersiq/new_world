@@ -1,0 +1,51 @@
+x-postgres-variables: &postgres-variables
+  POSTGRES_DB: "${DB__DB_NAME}"
+  POSTGRES_USER: "${DB__USERNAME}"
+  POSTGRES_PASSWORD: "${DB__PASSWORD}"
+  POSTGRES_PORT: "${DB__PORT}"
+
+
+services:
+  backend:
+    container_name: backend-${COMPOSE_PROJECT_NAME}
+    ports:
+      - "127.0.0.1:8080:8000"
+    volumes:
+      - ./src:/code/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: >
+      sh -c "uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload"
+    networks:
+      - app_network
+
+  postgres:
+    container_name: postgres-${COMPOSE_PROJECT_NAME}
+    image: postgres:17.6
+    environment:
+      <<: *postgres-variables
+    ports:
+      - "5432"
+    healthcheck:
+      interval: 3s
+      retries: 2
+      test: "pg_isready -U ${DB__USERNAME} -d ${DB__DB_NAME}"
+      timeout: 2s
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - app_network
+
+volumes:
+  postgres:
+
+networks:
+  app_network:
+    driver: bridge
+    name: app_network
