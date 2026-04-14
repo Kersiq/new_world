@@ -36,3 +36,5 @@ class Config(BaseSettings):
 
 def get_config():
     return  Config()
+
+config = get_config()
