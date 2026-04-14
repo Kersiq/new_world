@@ -12,23 +12,14 @@ from src.persistence.db.interface import get_async_engine, get_async_session_mak
 
 
 async def async_engine_impl() -> AsyncEngine:
-    if config.db.client_crt is not None:
-        return create_async_engine(
-            config.db.dsn,
-            pool_pre_ping=True,
-            pool_size=config.db.pool_max_size,
-            max_overflow=10,
-            pool_recycle=7200,
-            connect_args={"ssl": config.db.ssl_ctx},
-        )
-    else:
-        return create_async_engine(
-            config.db.dsn,
-            pool_pre_ping=True,
-            pool_size=config.db.pool_max_size,
-            max_overflow=10,
-            pool_recycle=7200,
-        )
+    return create_async_engine(
+        config.db.get_postgres_dsn(),
+        pool_pre_ping=True,
+        pool_size=config.db.pool_max_size,
+        max_overflow=10,
+        pool_recycle=7200,
+    )
+
 
 
 async def async_session_maker_impl(
