@@ -15,6 +15,14 @@ class Db(BaseModel):
     password: SecretStr
     db_name: str
 
+    def get_postgres_dsn(self) -> str:
+        return (
+            f"postgresql://{self.db.username}:"
+            f"{self.db.password.get_secret_value()}@"
+            f"{self.db.host}:{self.db.port}/"
+            f"{self.db.db_name}"
+        )
+
 
 class Config(BaseSettings):
     web: Web = Field(default_factory=Web)
@@ -24,14 +32,6 @@ class Config(BaseSettings):
         env_file=Path(__file__).resolve().parents[2] / ".env",
         env_nested_delimiter="__"
     )
-
-    def get_postgres_dsn(self) -> str:
-        return (
-            f"postgresql://{self.db.username}:"
-            f"{self.db.password.get_secret_value()}@"
-            f"{self.db.host}:{self.db.port}/"
-            f"{self.db.db_name}"
-        )
 
 
 def get_config():
