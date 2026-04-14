@@ -15,12 +15,15 @@ class Db(BaseModel):
     password: SecretStr
     db_name: str
 
+    pool_max_size: int = 10
+
+
     def get_postgres_dsn(self) -> str:
         return (
-            f"postgresql://{self.db.username}:"
-            f"{self.db.password.get_secret_value()}@"
-            f"{self.db.host}:{self.db.port}/"
-            f"{self.db.db_name}"
+            f"postgresql://{self.username}:"
+            f"{self.password.get_secret_value()}@"
+            f"{self.host}:{self.port}/"
+            f"{self.db_name}"
         )
 
 
@@ -38,3 +41,5 @@ def get_config():
     return  Config()
 
 config = get_config()
+
+print(config.__dict__)
