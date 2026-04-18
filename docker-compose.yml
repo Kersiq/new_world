@@ -12,6 +12,7 @@ services:
       - "127.0.0.1:8080:8000"
     volumes:
       - ./src:/code/src
+      - ./migrations:/code/migration
     depends_on:
       postgres:
         condition: service_healthy
