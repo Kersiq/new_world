@@ -20,7 +20,7 @@ class Db(BaseModel):
 
     def get_postgres_dsn(self) -> str:
         return (
-            f"postgresql://{self.username}:"
+            f"postgresql+asyncpg://{self.username}:"
             f"{self.password.get_secret_value()}@"
             f"{self.host}:{self.port}/"
             f"{self.db_name}"
