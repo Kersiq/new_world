@@ -16,7 +16,7 @@ class Payment(Base):
     description: Mapped[str] = mapped_column(sa.TEXT)
     meta: Mapped[dict] = mapped_column(sa.JSON)
     status: Mapped[PaymentStatusEnum] = mapped_column(sa.VARCHAR(20))
-    idempotency_key: Mapped[str] = mapped_column(sa.UUID) #could be uuid7
+    idempotency_key: Mapped[str] = mapped_column(sa.UUID, unique=True) #could be uuid7
     webhook_url: Mapped[str] = mapped_column(sa.VARCHAR)
     processed_at: Mapped[datetime | None]
 

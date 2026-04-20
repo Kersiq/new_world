@@ -8,7 +8,6 @@ from src.application.interfaces.outbox_table import IOutboxRepo
 from src.application.interfaces.payment import IPaymentRepo
 from src.application.usecases.check_idempotency_key_use_case import CheckPaymentIdempotencyKeyUseCase
 from src.entities.payment import PaymentEntity
-from src.infra.postgres.payment.dto import PaymentInfoDTO
 
 
 class CreatePaymentUseCase:

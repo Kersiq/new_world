@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
 from src.core.enums import OutboxEventTypes, OutboxStatusEnum
+from src.core.utils import ReturnAsDictUtils
 
 
 @dataclass
-class CreateOutboxCommand:
+class CreateOutboxCommand(ReturnAsDictUtils):
     routing_key:str
     payload: dict
     event_id: str

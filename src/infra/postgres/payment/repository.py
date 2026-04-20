@@ -1,5 +1,3 @@
-
-
 from sqlalchemy import select
 
 from src.application.command.payment import CreatePaymentCommand
@@ -19,14 +17,13 @@ class PaymentRepoImpl(IPaymentRepo):
         )
         result = await self.session.execute(stmt)
         result = result.scalars().first()
-        return result.to_dto() if result else None
+        return result.to_entity() if result else None
 
     async def create(self, cmd: CreatePaymentCommand) -> PaymentEntity:
         obj = Payment(
             **cmd.to_dict()
         )
-        await self.session.add(obj)
+        self.session.add(obj)
         await self.session.flush()
         await self.session.refresh(obj)
         return obj.to_entity()
-
