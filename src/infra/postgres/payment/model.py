@@ -1,6 +1,5 @@
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
-from uuid_extensions import uuid7
 from datetime import datetime
 from decimal import Decimal
 

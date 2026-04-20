@@ -9,5 +9,5 @@ class PostPaymentRequest(BaseModel):
     amount: Decimal
     currency: AvailableCurrencyEnum
     description: str
-    metadata: str
+    metadata: dict
     webhook_url: str
