@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 
 from src.infra.postgres.payment.dto import PaymentInfoDTO
+from src.application.command.payment import CreatePaymentCommand
 
 
 class IPaymentRepo(ABC):
@@ -11,5 +12,5 @@ class IPaymentRepo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def create(self, cmd: CreatePaymentCommand) -> int:
+    async def create(self, cmd: CreatePaymentCommand) -> PaymentInfoDTO | None:
         raise NotImplementedError
