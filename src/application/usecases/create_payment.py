@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 from uuid_extensions import uuid7
 
@@ -43,7 +43,7 @@ class CreatePaymentUseCase:
                 },
                 event_id=str(uuid7()),
                 last_error="",
-                next_retry_at=datetime.utcnow() + timedelta(seconds=10),
+                next_retry_at=datetime.now(UTC) + timedelta(seconds=10),
             )
         )
 
