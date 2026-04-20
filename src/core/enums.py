@@ -17,3 +17,7 @@ class OutboxStatusEnum(str, Enum):
     PENDING = "PENDING"
     SENT = "SENT"
     FAILED = "FAILED"
+
+
+class OutboxEventTypes(str, Enum):
+    PAYMENT = "PAYMENT"
