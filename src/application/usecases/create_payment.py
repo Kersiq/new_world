@@ -7,6 +7,7 @@ from src.application.command.payment import CreatePaymentCommand
 from src.application.interfaces.outbox_table import IOutboxRepo
 from src.application.interfaces.payment import IPaymentRepo
 from src.application.usecases.check_idempotency_key_use_case import CheckPaymentIdempotencyKeyUseCase
+from src.entities.payment import PaymentEntity
 from src.infra.postgres.payment.dto import PaymentInfoDTO
 
 
@@ -21,8 +22,8 @@ class CreatePaymentUseCase:
         self.payment_repo = payment_repo
         self.outbox_repo = outbox_repo
 
-    async def execute(self, cmd: CreatePaymentCommand, ik: str) -> PaymentInfoDTO:
-        check_payment = await self.check_payment_by_idem_k_uc.execute(ik)
+    async def execute(self, cmd: CreatePaymentCommand) -> PaymentEntity:
+        check_payment = await self.check_payment_by_idem_k_uc.execute(cmd.idempotency_key)
         if check_payment:
             return check_payment
 

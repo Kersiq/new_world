@@ -4,7 +4,6 @@ from sqlalchemy import select
 
 from src.application.command.payment import CreatePaymentCommand
 from src.application.interfaces.payment import IPaymentRepo
-from src.infra.postgres.payment.dto import PaymentInfoDTO
 from src.persistence.db.interface import get_async_session
 from src.infra.postgres.payment.model import Payment
 from src.entities.payment import PaymentEntity
@@ -14,17 +13,13 @@ class PaymentRepoImpl(IPaymentRepo):
     def __init__(self, session: get_async_session):
         self.session = session
 
-    async def get_by_idempotency_key(self, idempotency_key: str) -> PaymentInfoDTO:
-        stmt = select(Payment.id, Payment.status, Payment.created_at).where(
+    async def get_by_idempotency_key(self, idempotency_key: str) -> PaymentEntity | None:
+        stmt = select(Payment).where(
             Payment.idempotency_key == idempotency_key
         )
         result = await self.session.execute(stmt)
         result = result.scalars().first()
-        return PaymentInfoDTO(
-            id=result.id,
-            status=result.status,
-            created_at=result.created_at,
-        ) if result else None
+        return result.to_dto() if result else None
 
     async def create(self, cmd: CreatePaymentCommand) -> PaymentEntity:
         obj = Payment(

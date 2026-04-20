@@ -1,5 +1,5 @@
 from src.application.interfaces.payment import IPaymentRepo
-from src.infra.postgres.payment.dto import PaymentInfoDTO
+from src.entities.payment import PaymentEntity
 
 
 class CheckPaymentIdempotencyKeyUseCase:
@@ -12,7 +12,7 @@ class CheckPaymentIdempotencyKeyUseCase:
     async def execute(
             self,
             idempotency_key: str
-    ) -> PaymentInfoDTO | None:
+    ) -> PaymentEntity | None:
         payment_exist = await self.payment_repo.get_by_idempotency_key(
             idempotency_key=idempotency_key
         )
