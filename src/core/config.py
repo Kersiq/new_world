@@ -41,5 +41,3 @@ def get_config():
     return  Config()
 
 config = get_config()
-
-print(config.__dict__)
