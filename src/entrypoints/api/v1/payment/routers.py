@@ -18,3 +18,4 @@ async def post_request_payment(
         data: PostPaymentRequest,
         uc: FromDishka[None],
 ) -> PostPaymentResponse:
+    ...
