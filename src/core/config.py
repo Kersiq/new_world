@@ -27,9 +27,27 @@ class Db(BaseModel):
         )
 
 
+class RabbitMQ(BaseModel):
+    host: str = "localhost"
+    port: int = 5672
+    username: str = "guest"
+    password: str = "guest"
+    vhost: str = "/"
+
+    #queues
+    payment_process: str = "payment.process"
+
+    def get_dsn(self, host) -> str:
+        return (
+            f"amqp://{self.username}:{self.password}"
+            f"@{self.host if not host else host}:{self.port}/{self.vhost}"
+        )
+
+
 class Config(BaseSettings):
     web: Web = Field(default_factory=Web)
     db: Db = Field(default_factory=Db)
+    rabbit: RabbitMQ = Field(default_factory=RabbitMQ)
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parents[2] / ".env",

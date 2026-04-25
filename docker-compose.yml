@@ -4,6 +4,10 @@ x-postgres-variables: &postgres-variables
   POSTGRES_PASSWORD: "${DB__PASSWORD}"
   POSTGRES_PORT: "${DB__PORT}"
 
+x-rmq-variables: &rmq-variables
+  RABBITMQ_DEFAULT_USER: "${RABBIT__USERNAME}"
+  RABBITMQ_DEFAULT_PASS: "${RABBIT__PASSWORD}"
+  RABBITMQ_DEFAULT_VHOST: "${RABBIT__VHOST}"
 
 services:
   backend:
@@ -38,8 +42,40 @@ services:
       retries: 2
       test: "pg_isready -U ${DB__USERNAME} -d ${DB__DB_NAME}"
       timeout: 2s
-    volumes:
-      - ./db_data:/var/lib/postgresql/data
+    #volumes:
+    #  - ./db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  scheduler:
+    container_name: scheduler-${COMPOSE_PROJECT_NAME}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - app_network
+    command: [ "sh", "-c", "python3 -m src.scheduler" ]
+
+  rabbitmq:
+    container_name: rabbitmq-${COMPOSE_PROJECT_NAME}
+    image: rabbitmq:3.13-management
+    environment:
+      <<: *rmq-variables
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    #volumes:
+    #  - ./rabbitmq_data:/var/lib/rabbitmq
     restart: unless-stopped
     networks:
       - app_network
