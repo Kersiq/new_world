@@ -53,13 +53,34 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     build: .
     restart: unless-stopped
     env_file:
       - .env
+    volumes:
+      - ./src:/code/src
     networks:
       - app_network
     command: [ "sh", "-c", "python3 -m src.scheduler" ]
+
+  payment-consumer:
+    container_name: payment-consumer-${COMPOSE_PROJECT_NAME}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./src:/code/src
+    networks:
+      - app_network
+    command: [ "sh", "-c", "python3 -m src.consumer" ]
 
   rabbitmq:
     container_name: rabbitmq-${COMPOSE_PROJECT_NAME}
