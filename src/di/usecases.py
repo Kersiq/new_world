@@ -2,7 +2,9 @@ from dishka import Provider, Scope, provide
 
 from src.application.usecases.check_idempotency_key_use_case import CheckPaymentIdempotencyKeyUseCase
 from src.application.usecases.create_payment import CreatePaymentUseCase
+from src.application.usecases.process_payment import ProcessPaymentUseCase
 from src.application.usecases.scheduler.add_payment_into_rmq import ProducePaymentIntoRMQUseCase
+from src.application.usecases.scheduler.send_webhooks import SendWebhooksUseCase
 
 
 class UseCaseProvider(Provider):
@@ -10,12 +12,23 @@ class UseCaseProvider(Provider):
         source=CheckPaymentIdempotencyKeyUseCase,
         scope=Scope.REQUEST
     )
+
     create_payment_uc = provide(
         source=CreatePaymentUseCase,
         scope=Scope.REQUEST
     )
 
+    process_payment_uc = provide(
+        source=ProcessPaymentUseCase,
+        scope=Scope.REQUEST
+    )
+
     scheduler_produce_payment_uc = provide(
         source=ProducePaymentIntoRMQUseCase,
+        scope=Scope.REQUEST
+    )
+
+    send_webhooks_uc = provide(
+        source=SendWebhooksUseCase,
         scope=Scope.REQUEST
     )
