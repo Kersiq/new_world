@@ -18,7 +18,7 @@ class Payment(Base):
     status: Mapped[PaymentStatusEnum] = mapped_column(sa.VARCHAR(20))
     idempotency_key: Mapped[str] = mapped_column(sa.UUID, unique=True) #could be uuid7
     webhook_url: Mapped[str] = mapped_column(sa.VARCHAR)
-    processed_at: Mapped[datetime | None]
+    processed_at: Mapped[datetime | None] = mapped_column(sa.DateTime(timezone=True), nullable=True)
 
     def to_entity(self) -> PaymentEntity:
         return PaymentEntity(
