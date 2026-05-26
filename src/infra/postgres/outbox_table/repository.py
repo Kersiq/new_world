@@ -41,4 +41,3 @@ class OutboxRepoImpl(IOutboxRepo):
         )
 
         await self.session.execute(stmt)
-        await self.session.commit()
