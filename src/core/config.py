@@ -34,8 +34,13 @@ class RabbitMQ(BaseModel):
     password: str = "guest"
     vhost: str = "/"
 
-    #queues
-    payment_process: str = "payment.process"
+    payments_exchange: str = "payments"
+    payments_new: str = "payments.new"
+    payments_retry: str = "payments.retry"
+    payments_dlq: str = "payments.dlq"
+
+    max_retries: int = 3
+    retry_ttl_ms: int = 5000
 
     def get_dsn(self) -> str:
         return (
