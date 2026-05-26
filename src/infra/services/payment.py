@@ -2,14 +2,17 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from src.application.usecases.scheduler.add_payment_into_rmq import ProducePaymentIntoRMQUseCase
+from src.application.usecases.scheduler.send_webhooks import SendWebhooksUseCase
 from src.di import get_async_container
 
 class PaymentSchedulerService:
     def __init__(
         self,
         produce_payment_tasks: ProducePaymentIntoRMQUseCase = ProducePaymentIntoRMQUseCase,
+        send_webhooks: SendWebhooksUseCase = SendWebhooksUseCase,
     ) -> None:
         self._produce_payment_tasks = produce_payment_tasks
+        self._send_webhooks = send_webhooks
 
     @staticmethod
     async def __run_cron_with_container(uc, flag: bool | None = None) -> None:
@@ -31,6 +34,18 @@ class PaymentSchedulerService:
                 scheduler_time
             ),
             id="_produce_payment_tasks",
+            coalesce=True,
+            max_instances=1,
+            replace_existing=True,
+        )
+
+        scheduler.add_job(
+            self.__run_cron_with_container,
+            args=[self._send_webhooks],
+            trigger=CronTrigger.from_crontab(
+                scheduler_time
+            ),
+            id="_send_webhooks",
             coalesce=True,
             max_instances=1,
             replace_existing=True,
