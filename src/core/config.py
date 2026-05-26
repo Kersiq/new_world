@@ -37,10 +37,10 @@ class RabbitMQ(BaseModel):
     #queues
     payment_process: str = "payment.process"
 
-    def get_dsn(self, host) -> str:
+    def get_dsn(self) -> str:
         return (
             f"amqp://{self.username}:{self.password}"
-            f"@{self.host if not host else host}:{self.port}/{self.vhost}"
+            f"@{self.host}:{self.port}/{self.vhost}"
         )
 
 
