@@ -8,5 +8,13 @@ class FastStreamRMQService(IRMQService):
     def __init__(self, broker: get_rabbit_broker):
         self._broker = broker
 
-    async def publish(self, message: Any, queue: str) -> None:
-        await self._broker.publish(message, queue=queue)
+    async def publish(
+        self,
+        message: Any,
+        routing_key: str,
+        exchange: str | None = None,
+    ) -> None:
+        if exchange is None:
+            await self._broker.publish(message, queue=routing_key)
+        else:
+            await self._broker.publish(message, routing_key=routing_key, exchange=exchange)
