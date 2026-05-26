@@ -13,7 +13,7 @@ x_api_key_dependency = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 router = APIRouter(
     prefix="/payments",
-    tags=["Onboarding / V1"],
+    tags=["Payments / V1"],
     route_class=DishkaRoute,
     dependencies=[Depends(x_api_key_dependency)],
 )
