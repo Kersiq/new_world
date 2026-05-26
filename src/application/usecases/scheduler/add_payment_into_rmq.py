@@ -4,6 +4,7 @@ import asyncio
 from src.application.interfaces.outbox_table import IOutboxRepo
 from src.application.interfaces.services.i_rmq import IRMQService
 from src.core.config import config
+from src.core.enums import OutboxEventTypes
 
 
 logger = logging.getLogger(__name__)
@@ -19,17 +20,18 @@ class ProducePaymentIntoRMQUseCase:
         self.outbox_repo = outbox_repo
 
     async def execute(self) -> None:
-        pending_tasks = await self.outbox_repo.get_pending()
+        pending_tasks = await self.outbox_repo.get_pending(OutboxEventTypes.PAYMENT)
 
         if not pending_tasks:
-            logger.info("No pending outbox tasks found")
+            logger.info("No pending payment outbox tasks found")
             return
 
         async def publish(task):
             try:
                 await self.rabbit.publish(
                     task.payload,
-                    config.rabbit.payment_process,
+                    routing_key=config.rabbit.payments_new,
+                    exchange=config.rabbit.payments_exchange,
                 )
                 return task.id
             except Exception:
