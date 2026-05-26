@@ -15,4 +15,4 @@ class CreatePaymentCommand(ReturnAsDictUtils):
     webhook_url: str
     processed_at: datetime | None = None
     status: PaymentStatusEnum = PaymentStatusEnum.PENDING
-    meta: dict = field(default_factory=lambda: {"stub" : "stub"})
+    meta: dict = field(default_factory=dict)
