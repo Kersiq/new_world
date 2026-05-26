@@ -26,24 +26,19 @@ class CreatePaymentUseCase:
         if check_payment:
             return check_payment
 
-        new_payment = await self.payment_repo.create(
-            cmd
-        )
+        new_payment = await self.payment_repo.create(cmd)
+
         await self.outbox_repo.create(
             CreateOutboxCommand(
                 routing_key="payment.created",
                 payload={
-                    "amount": str(cmd.amount),
-                    "currency": cmd.currency.value,
-                    "description": cmd.description,
-                    "idempotency_key": cmd.idempotency_key,
+                    "payment_id": new_payment.id,
                     "webhook_url": cmd.webhook_url,
-                    "status": cmd.status.value,
-                    "meta": cmd.meta,
+                    "idempotency_key": cmd.idempotency_key,
                 },
                 event_id=str(uuid7()),
                 last_error="",
-                next_retry_at=datetime.now(UTC) + timedelta(seconds=10),
+                next_retry_at=datetime.now(UTC),
             )
         )
 
