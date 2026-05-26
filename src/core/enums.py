@@ -21,3 +21,4 @@ class OutboxStatusEnum(str, Enum):
 
 class OutboxEventTypes(str, Enum):
     PAYMENT = "PAYMENT"
+    WEBHOOK_DELIVERY = "WEBHOOK_DELIVERY"
