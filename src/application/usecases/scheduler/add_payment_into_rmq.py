@@ -6,11 +6,6 @@ from src.application.interfaces.services.i_rmq import IRMQService
 from src.core.config import config
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-)
-
 logger = logging.getLogger(__name__)
 
 
@@ -37,8 +32,8 @@ class ProducePaymentIntoRMQUseCase:
                     config.rabbit.payment_process,
                 )
                 return task.id
-            except Exception as e:
-                logger.exception(f"Failed to publish task {task.id}: {e}")
+            except Exception:
+                logger.exception("Failed to publish task %s", task.id)
                 return None
 
         results = await asyncio.gather(
@@ -50,4 +45,4 @@ class ProducePaymentIntoRMQUseCase:
 
         if succeeded_ids:
             await self.outbox_repo.mark_as_sent(succeeded_ids)
-            logger.info(f"Published {len(succeeded_ids)} outbox events")
+            logger.info("Published %s outbox events", len(succeeded_ids))
